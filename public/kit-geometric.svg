@@ -1,0 +1,17 @@
+<svg width="900" height="900" viewBox="0 0 900 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="900" fill="#EEF1F2"/>
+  <circle cx="450" cy="450" r="288" fill="#DCE3E4"/>
+  <circle cx="450" cy="450" r="274" stroke="#D29C60" stroke-width="14"/>
+  <path d="M450 176L593 292L450 450L313 295L450 176Z" fill="#1C5B6C"/>
+  <path d="M450 450L593 292L703 446L450 450Z" fill="#2F7585"/>
+  <path d="M450 450L703 446L628 633L450 450Z" fill="#163A4A"/>
+  <path d="M450 450L628 633L449 724L450 450Z" fill="#254957"/>
+  <path d="M450 450L449 724L290 604L450 450Z" fill="#58717D"/>
+  <path d="M450 450L290 604L180 438L450 450Z" fill="#7F96A0"/>
+  <path d="M450 450L180 438L313 295L450 450Z" fill="#A6B8C0"/>
+  <path d="M450 176L542 355L450 450L360 358L450 176Z" fill="#356F7F"/>
+  <path d="M450 450L593 292L542 355L450 450Z" fill="#D7B38A"/>
+  <path d="M450 450L628 633L541 546L450 450Z" fill="#E0C398"/>
+  <path d="M450 450L290 604L364 535L450 450Z" fill="#CAB086"/>
+  <path d="M450 450L180 438L360 358L450 450Z" fill="#E8DBCB"/>
+</svg>

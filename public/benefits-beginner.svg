@@ -1,0 +1,13 @@
+<svg width="820" height="480" viewBox="0 0 820 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="820" height="480" fill="#7C573A"/>
+  <rect x="274" y="32" width="334" height="410" rx="167" fill="#E7DDCF"/>
+  <rect x="290" y="48" width="302" height="378" rx="151" stroke="#D39B5D" stroke-width="12"/>
+  <path d="M410 160C440 134 471 130 503 148" stroke="#4A5660" stroke-width="6" stroke-linecap="round"/>
+  <path d="M355 243C396 198 450 183 525 197" stroke="#4A5660" stroke-width="6" stroke-linecap="round"/>
+  <path d="M345 303C413 257 493 248 560 272" stroke="#4A5660" stroke-width="6" stroke-linecap="round"/>
+  <path d="M460 116L461 350" stroke="#287EA3" stroke-width="7" stroke-linecap="round"/>
+  <path d="M115 292C170 245 216 232 275 252C310 264 329 279 352 307" stroke="#F1C5A5" stroke-width="30" stroke-linecap="round"/>
+  <path d="M85 346C145 290 202 278 261 303C299 319 320 338 345 374" stroke="#F0C7A6" stroke-width="30" stroke-linecap="round"/>
+  <path d="M698 291C643 245 597 232 538 252C503 264 484 279 461 307" stroke="#F1C5A5" stroke-width="30" stroke-linecap="round"/>
+  <path d="M729 345C669 290 612 278 553 303C515 319 494 338 469 374" stroke="#F0C7A6" stroke-width="30" stroke-linecap="round"/>
+</svg>

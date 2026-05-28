@@ -1,0 +1,48 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="900" fill="#1C2B30"/>
+  <path d="M0 900L0 0C176 12 316 98 420 214C588 402 751 502 1200 480V900H0Z" fill="url(#body)"/>
+  <path d="M468 321C594 212 737 164 948 122C842 250 792 331 759 423C632 389 555 359 468 321Z" fill="url(#crest)"/>
+  <path d="M777 245C878 178 972 138 1098 124C1016 212 965 289 927 371C861 333 816 291 777 245Z" fill="url(#wing)"/>
+  <path d="M757 328C860 372 941 435 1019 531C912 523 837 520 733 548C725 453 731 396 757 328Z" fill="url(#teal)"/>
+  <path d="M661 305C585 377 530 472 484 630C602 613 695 594 797 601C752 488 713 391 661 305Z" fill="url(#chest)"/>
+  <path d="M469 321C411 415 368 506 324 650C418 638 487 629 565 635C539 518 513 420 469 321Z" fill="url(#tail)"/>
+  <path d="M362 279C279 286 203 321 126 391C223 405 309 426 408 473C409 392 398 335 362 279Z" fill="url(#beakGlow)"/>
+  <path d="M293 318C225 323 162 349 96 395C174 406 241 423 318 454C322 404 315 360 293 318Z" fill="#C9681D"/>
+  <circle cx="402" cy="320" r="36" fill="#091315"/>
+  <circle cx="394" cy="312" r="9" fill="#F8F8F4"/>
+  <defs>
+    <linearGradient id="body" x1="247" y1="287" x2="1120" y2="768" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6F2E12"/>
+      <stop offset="0.34" stop-color="#D66B1C"/>
+      <stop offset="0.65" stop-color="#2A8CA7"/>
+      <stop offset="1" stop-color="#172D35"/>
+    </linearGradient>
+    <linearGradient id="crest" x1="516" y1="201" x2="929" y2="435" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF4B25"/>
+      <stop offset="0.4" stop-color="#F29B2D"/>
+      <stop offset="1" stop-color="#28576A"/>
+    </linearGradient>
+    <linearGradient id="wing" x1="828" y1="161" x2="1056" y2="384" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF5A2B"/>
+      <stop offset="0.4" stop-color="#F7B33E"/>
+      <stop offset="1" stop-color="#D8E7E8"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="774" y1="353" x2="964" y2="556" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3BABC8"/>
+      <stop offset="1" stop-color="#D6ECEF"/>
+    </linearGradient>
+    <linearGradient id="chest" x1="524" y1="356" x2="770" y2="603" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E29027"/>
+      <stop offset="0.52" stop-color="#245861"/>
+      <stop offset="1" stop-color="#1A2F35"/>
+    </linearGradient>
+    <linearGradient id="tail" x1="370" y1="363" x2="560" y2="631" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A84B17"/>
+      <stop offset="1" stop-color="#162328"/>
+    </linearGradient>
+    <linearGradient id="beakGlow" x1="126" y1="327" x2="406" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF6D2E"/>
+      <stop offset="1" stop-color="#E8C248"/>
+    </linearGradient>
+  </defs>
+</svg>

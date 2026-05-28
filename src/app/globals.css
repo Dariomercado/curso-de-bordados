@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f1ea;
+  --background-strong: #efe4d8;
+  --surface: rgba(255, 252, 247, 0.78);
+  --surface-strong: #fffaf4;
+  --foreground: #342b25;
+  --foreground-muted: #6f6258;
+  --border: rgba(136, 106, 80, 0.18);
+  --brand: #8e5c55;
+  --brand-strong: #744842;
+  --accent: #d9c0a9;
+  --shadow-soft: 0 24px 80px rgba(78, 50, 34, 0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-strong: var(--background-strong);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-accent: var(--accent);
+  --font-heading: var(--font-heading-family);
+  --font-body: var(--font-body-family);
+  --shadow-soft: var(--shadow-soft);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply h-full;
+  }
+
+  body {
+    @apply min-h-full bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at top left, rgba(217, 192, 169, 0.24), transparent 32%),
+      linear-gradient(180deg, rgba(255, 252, 247, 0.95), rgba(247, 241, 234, 1));
+  }
+
+  ::selection {
+    background: rgba(142, 92, 85, 0.18);
+  }
+
+  a,
+  button {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .thread-divider {
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgba(142, 92, 85, 0.2),
+      transparent
+    );
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body-family), sans-serif;
 }
