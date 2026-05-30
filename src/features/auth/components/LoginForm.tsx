@@ -68,6 +68,7 @@ export function LoginForm() {
   return (
     <form
       className="rounded-[2rem] border border-border/70 bg-surface-strong p-6 shadow-soft sm:p-8"
+      method="post"
       onSubmit={handleSubmit}
       noValidate
     >
