@@ -12,7 +12,7 @@ import { getAuthSession } from "@/lib/auth/guards";
 
 export const metadata: Metadata = {
   title: "Ingresar",
-  description: "Acceso privado para administración y alumnas de Atelier de Bordado.",
+  description: "Acceso privado para administracion y alumnas de Atelier de Bordado.",
   robots: {
     index: false,
     follow: false,
@@ -37,8 +37,8 @@ export default async function LoginPage() {
               <SectionHeading
                 id="login-page-heading"
                 eyebrow="Acceso privado"
-                title="Inicia sesión"
-                description="Ingresa con tu email y contraseña para acceder a tu área privada."
+                title="Inicia sesion"
+                description="Ingresa con el email que usaste para comprar. Si todavia no tenes contrasena o compraste como invitada, podes activar tu acceso en un paso."
               />
               <ThreadAccent className="mt-8 h-7 w-32" />
 

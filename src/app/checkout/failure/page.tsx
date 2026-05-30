@@ -10,11 +10,11 @@ export default function CheckoutFailurePage() {
   return (
     <CheckoutReturnPage
       eyebrow="Checkout"
-      title="No pudimos procesar el pago."
-      description="Esta pantalla no confirma acceso ni modifica tu pedido. Si quieres, puedes intentar nuevamente desde el curso o escribirnos para ayudarte."
-      note="Si el problema persiste, revisa el medio de pago elegido o contactanos para orientarte antes de volver a intentarlo."
+      title="El pago no se completo."
+      description="No recibimos un pago aprobado para esta compra. Podes intentarlo nuevamente desde el curso o escribirnos si necesitas ayuda."
+      note="Si Mercado Pago muestra algun movimiento en tu cuenta, no vuelvas a pagar todavia: contactanos para revisarlo."
       primaryLink={{ href: "/cursos", label: "Volver a cursos" }}
-      secondaryLink={{ href: "/contacto", label: "Ir a contacto" }}
+      secondaryLink={{ href: "/contacto", label: "Necesito ayuda" }}
     />
   );
 }

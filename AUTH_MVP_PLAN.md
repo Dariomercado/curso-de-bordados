@@ -1,3 +1,9 @@
+> **Documento historico / desactualizado frente al MVP v1.**
+>
+> Este archivo conserva el plan inicial de autenticacion. Para el estado vigente del MVP v1, usar `PROJECT_STATE.md` como fuente de verdad. El MVP v1 ya incluye registro publico, recuperacion/restablecimiento de contrasena, email verification no bloqueante, compra guest, activacion post-compra por reset password, Mercado Pago y asignacion automatica de enrollments por webhook `merchant_order`.
+
+---
+
 # AUTH_MVP_PLAN.md
 
 ## 1. Objetivo

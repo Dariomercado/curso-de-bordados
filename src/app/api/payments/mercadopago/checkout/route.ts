@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/http/rate-limit";
 import { startCourseCheckout } from "@/server/use-cases/start-course-checkout";
 
 export async function POST(request: Request) {
@@ -18,6 +19,31 @@ export async function POST(request: Request) {
   }
 
   try {
+    const buyerEmail =
+      typeof body === "object" &&
+      body !== null &&
+      "buyerEmail" in body &&
+      typeof body.buyerEmail === "string"
+        ? body.buyerEmail
+        : null;
+    const rateLimit = checkRateLimit(request, {
+      keyPrefix: "payments:mercadopago:checkout",
+      limit: 5,
+      windowMs: 15 * 60 * 1000,
+      identifiers: [buyerEmail],
+    });
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Demasiados intentos. Intenta nuevamente en unos minutos.",
+          data: null,
+        },
+        { status: 429, headers: getRateLimitHeaders(rateLimit) },
+      );
+    }
+
     const result = await startCourseCheckout(body);
 
     if (!result.success) {

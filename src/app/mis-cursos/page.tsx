@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CourseStatus } from "@prisma/client";
 import { Container } from "@/components/layout/Container";
+import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ThreadAccent } from "@/components/ui/ThreadAccent";
 import { requireAuthSession } from "@/lib/auth/guards";
@@ -74,8 +75,21 @@ export default async function MyCoursesPage() {
         ) : (
           <div className="mt-10 rounded-[2rem] border border-border/70 bg-surface px-6 py-8 shadow-soft sm:px-8">
             <p className="text-base leading-8 text-foreground-muted">
-              Todavia no tienes cursos asignados a tu cuenta.
+              Todavia no vemos cursos habilitados en esta cuenta.
             </p>
+            <p className="mt-3 text-base leading-8 text-foreground-muted">
+              Si acabas de comprar, la confirmacion de Mercado Pago puede tardar unos
+              minutos. Asegurate de ingresar con el mismo email que usaste durante la
+              compra.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Button href="/recuperar-contrasena">
+                Activar acceso / restablecer contrasena
+              </Button>
+              <Button href="/cursos" variant="secondary">
+                Ver cursos
+              </Button>
+            </div>
           </div>
         )}
       </Container>

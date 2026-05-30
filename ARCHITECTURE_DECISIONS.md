@@ -1,3 +1,9 @@
+> **Documento historico / parcialmente desactualizado.**
+>
+> Este archivo conserva decisiones iniciales de arquitectura. Para el estado vigente del MVP v1, usar `PROJECT_STATE.md` como fuente de verdad. En particular, el MVP v1 ya incluye auth, email transaccional, Mercado Pago y fulfillment por webhook `merchant_order`; Cloudinary, Server Actions, CMS, editor de cursos y admin avanzado quedan fuera del MVP v1.
+
+---
+
 # 📄 ARCHITECTURE_DECISIONS.md
 
 ## 1. Objetivo del sistema

@@ -54,7 +54,9 @@ export function LoginForm() {
       });
 
       if (!result || result.error) {
-        setServerMessage("Email o contraseña incorrectos.");
+        setServerMessage(
+          "No pudimos ingresar con esos datos. Revisa el email y la contrasena, o activa tu acceso si compraste sin crear cuenta.",
+        );
         return;
       }
 
@@ -95,7 +97,7 @@ export function LoginForm() {
           href="/recuperar-contrasena"
           className="text-sm font-semibold text-brand hover:text-brand-strong"
         >
-          Olvide mi contrasena
+          Olvide mi contrasena / activar acceso
         </Link>
         <Link
           href="/registro"

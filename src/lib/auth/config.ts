@@ -6,6 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db/prisma";
 import { verifyPassword } from "@/lib/auth/password";
 import { authSecret } from "@/lib/auth/secret";
+import { checkRateLimit } from "@/lib/http/rate-limit";
 import { loginInputSchema } from "@/lib/validations/login";
 
 export const authOptions: NextAuthOptions = {
@@ -30,10 +31,26 @@ export const authOptions: NextAuthOptions = {
           type: "password",
         },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const parsed = loginInputSchema.safeParse(credentials);
 
         if (!parsed.success) {
+          return null;
+        }
+
+        const rateLimit = checkRateLimit(
+          {
+            headers: new Headers(request.headers as HeadersInit),
+          } as Request,
+          {
+            keyPrefix: "auth:credentials",
+            limit: 10,
+            windowMs: 15 * 60 * 1000,
+            identifiers: [parsed.data.email],
+          },
+        );
+
+        if (!rateLimit.allowed) {
           return null;
         }
 

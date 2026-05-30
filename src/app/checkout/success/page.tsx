@@ -10,15 +10,15 @@ export default function CheckoutSuccessPage() {
   return (
     <CheckoutReturnPage
       eyebrow="Checkout"
-      title="Pago recibido. Tu acceso se habilita automaticamente."
-      description="La confirmacion depende del sistema y puede tardar unos segundos mientras validamos el pago y habilitamos tu curso."
-      note="Esta pantalla no otorga acceso por si sola. Cuando la confirmacion termine, tu curso aparecera automaticamente en Mis cursos."
+      title="Pago recibido. Estamos habilitando tu acceso."
+      description="La confirmacion final llega por Mercado Pago y puede tardar unos segundos. Cuando se acredite, tu curso quedara asociado al email que usaste para comprar."
+      note="Si ya tenes cuenta, ingresa con ese email. Si compraste por primera vez, crea tu contrasena desde Activar acceso para entrar a tus cursos."
       primaryLink={{
-        href: "/mis-cursos",
-        label: "Ir a mis cursos",
+        href: "/recuperar-contrasena",
+        label: "Activar acceso / crear contrasena",
         className: "min-h-14 text-base sm:min-h-16 sm:px-8 sm:text-base",
       }}
-      secondaryLink={{ href: "/cursos", label: "Ver mas cursos" }}
+      secondaryLink={{ href: "/mis-cursos", label: "Ya tengo cuenta: ir a mis cursos" }}
     />
   );
 }

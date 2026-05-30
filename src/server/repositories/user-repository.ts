@@ -136,7 +136,9 @@ export async function upsertUserByEmail(email: string, db?: Prisma.TransactionCl
     },
     select: {
       id: true,
+      name: true,
       email: true,
+      passwordHash: true,
     },
   });
 }

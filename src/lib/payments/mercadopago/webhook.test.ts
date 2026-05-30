@@ -17,7 +17,8 @@ describe("validateMercadoPagoWebhookSignature", () => {
   });
 
   it("validates the signature using data.id and x-request-id", () => {
-    const manifest = "id:123456;request-id:req-1;ts:1742505638683;";
+    const timestamp = String(Date.now());
+    const manifest = `id:123456;request-id:req-1;ts:${timestamp};`;
     const hash = createHmac("sha256", "super-secret")
       .update(manifest)
       .digest("hex");
@@ -25,14 +26,15 @@ describe("validateMercadoPagoWebhookSignature", () => {
     expect(
       validateMercadoPagoWebhookSignature({
         dataId: "123456",
-        xSignature: `ts=1742505638683,v1=${hash}`,
+        xSignature: `ts=${timestamp},v1=${hash}`,
         xRequestId: "req-1",
       }),
     ).toBe(true);
   });
 
   it("uses data.id exactly as received in the manifest", () => {
-    const manifest = "id:ABC123;request-id:req-1;ts:1742505638683;";
+    const timestamp = String(Date.now());
+    const manifest = `id:ABC123;request-id:req-1;ts:${timestamp};`;
     const hash = createHmac("sha256", "super-secret")
       .update(manifest)
       .digest("hex");
@@ -40,10 +42,26 @@ describe("validateMercadoPagoWebhookSignature", () => {
     expect(
       validateMercadoPagoWebhookSignature({
         dataId: "ABC123",
-        xSignature: `ts=1742505638683,v1=${hash}`,
+        xSignature: `ts=${timestamp},v1=${hash}`,
         xRequestId: "req-1",
       }),
     ).toBe(true);
+  });
+
+  it("returns false when the signature timestamp is stale", () => {
+    const timestamp = String(Date.now() - 11 * 60 * 1000);
+    const manifest = `id:123456;request-id:req-1;ts:${timestamp};`;
+    const hash = createHmac("sha256", "super-secret")
+      .update(manifest)
+      .digest("hex");
+
+    expect(
+      validateMercadoPagoWebhookSignature({
+        dataId: "123456",
+        xSignature: `ts=${timestamp},v1=${hash}`,
+        xRequestId: "req-1",
+      }),
+    ).toBe(false);
   });
 
   it("returns false when x-signature is missing", () => {

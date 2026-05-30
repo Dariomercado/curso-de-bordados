@@ -9,8 +9,8 @@ import { navigationItems, primaryNavigationCta } from "@/data/navigation";
 import { ForgotPasswordForm } from "@/features/auth/components/ForgotPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Recuperar contraseña",
-  description: "Solicita un enlace para restablecer tu contraseña de acceso.",
+  title: "Activar acceso o recuperar contrasena",
+  description: "Solicita un enlace para crear o restablecer tu contrasena de acceso.",
   robots: {
     index: false,
     follow: false,
@@ -28,9 +28,9 @@ export default function ForgotPasswordPage() {
             <div className="mx-auto max-w-2xl">
               <SectionHeading
                 id="forgot-password-page-heading"
-                eyebrow="Recuperar acceso"
-                title="Restablece tu contraseña"
-                description="Ingresa tu email y te enviaremos instrucciones para definir una nueva contraseña."
+                eyebrow="Activar acceso"
+                title="Activa tu acceso o restablece tu contrasena"
+                description="Ingresa el email que usaste para comprar. Si tu pago ya fue confirmado, te enviaremos un enlace para crear una contrasena y entrar a tus cursos."
               />
               <ThreadAccent className="mt-8 h-7 w-32" />
 

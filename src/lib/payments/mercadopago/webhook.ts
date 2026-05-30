@@ -1,6 +1,9 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { getMercadoPagoWebhookSecret } from "@/lib/payments/mercadopago/config";
 
+const WEBHOOK_SIGNATURE_MAX_AGE_MS = 10 * 60 * 1000;
+const WEBHOOK_SIGNATURE_MAX_FUTURE_SKEW_MS = 2 * 60 * 1000;
+
 type ValidateMercadoPagoWebhookSignatureInput = {
   dataId?: string | null;
   xSignature: string | null;
@@ -54,6 +57,35 @@ function maskValue(value: string) {
   return `${value.slice(0, 8)}...${value.slice(-8)}`;
 }
 
+function parseTimestamp(value: string) {
+  if (!/^\d+$/.test(value)) {
+    return null;
+  }
+
+  const timestamp = Number(value);
+
+  if (!Number.isSafeInteger(timestamp)) {
+    return null;
+  }
+
+  return value.length <= 10 ? timestamp * 1000 : timestamp;
+}
+
+function isFreshTimestamp(value: string) {
+  const timestamp = parseTimestamp(value);
+
+  if (timestamp === null) {
+    return false;
+  }
+
+  const now = Date.now();
+
+  return (
+    timestamp >= now - WEBHOOK_SIGNATURE_MAX_AGE_MS &&
+    timestamp <= now + WEBHOOK_SIGNATURE_MAX_FUTURE_SKEW_MS
+  );
+}
+
 export function validateMercadoPagoWebhookSignature(
   input: ValidateMercadoPagoWebhookSignatureInput,
 ) {
@@ -65,6 +97,10 @@ export function validateMercadoPagoWebhookSignature(
   const parsedSignature = parseSignatureHeader(input.xSignature);
 
   if (!parsedSignature) {
+    return false;
+  }
+
+  if (!isFreshTimestamp(parsedSignature.ts)) {
     return false;
   }
 

@@ -53,3 +53,56 @@ export async function buildPasswordResetMessage({
     ],
   };
 }
+
+export async function buildAccessActivationMessage({
+  to,
+  name,
+  resetUrl,
+}: BuildPasswordResetMessageInput): Promise<TransactionalEmailMessage> {
+  const subject = "Activa tu acceso en Atelier de Bordado";
+  const previewText = "Define tu contrasena para entrar a tu curso.";
+  const intro = name
+    ? `Hola ${name}, tu compra fue confirmada y ya tienes acceso a tu curso.`
+    : "Tu compra fue confirmada y ya tienes acceso a tu curso.";
+  const body = `Usa este enlace para definir tu contrasena y entrar a tu cuenta. Por seguridad, estara disponible durante ${EXPIRES_IN_TEXT}. Si ya activaste tu acceso, puedes ignorar este mensaje.`;
+  const text = [
+    name ? `Hola ${name},` : "Hola,",
+    "",
+    "Tu compra fue confirmada y ya tienes acceso a tu curso en Atelier de Bordado.",
+    "Usa este enlace para definir tu contrasena y entrar a tu cuenta.",
+    `Este enlace estara disponible durante ${EXPIRES_IN_TEXT}.`,
+    "",
+    resetUrl,
+    "",
+    "Si ya activaste tu acceso, puedes ignorar este mensaje.",
+  ].join("\n");
+
+  const { html } = await renderEmailTemplate({
+    template: (
+      <PasswordResetTemplate
+        name={name}
+        resetUrl={resetUrl}
+        expiresInText={EXPIRES_IN_TEXT}
+        previewText={previewText}
+        title="Activa tu acceso"
+        intro={intro}
+        ctaLabel="Activar acceso"
+        body={body}
+      />
+    ),
+    text,
+  });
+
+  return {
+    to,
+    subject,
+    html,
+    text,
+    tags: [
+      {
+        name: "category",
+        value: "auth_access_activation",
+      },
+    ],
+  };
+}

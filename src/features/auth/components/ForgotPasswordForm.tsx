@@ -73,7 +73,7 @@ export function ForgotPasswordForm() {
         setDevPreview(payload.devPreview ?? null);
         setServerMessage(
           payload.message ??
-            "Si el email existe, te enviamos instrucciones para restablecer tu contrasena.",
+            "Si ese email existe o tiene una compra confirmada, te enviamos instrucciones para crear o restablecer tu contrasena.",
         );
       } catch {
         setServerMessage("No se pudo procesar la solicitud. Intenta nuevamente.");

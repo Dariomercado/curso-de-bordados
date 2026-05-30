@@ -6,6 +6,10 @@ type PasswordResetTemplateProps = {
   resetUrl: string;
   expiresInText: string;
   previewText: string;
+  title?: string;
+  intro?: string;
+  ctaLabel?: string;
+  body?: string;
 };
 
 export function PasswordResetTemplate({
@@ -13,23 +17,27 @@ export function PasswordResetTemplate({
   resetUrl,
   expiresInText,
   previewText,
+  title = "Restablece tu contrasena",
+  intro,
+  ctaLabel = "Restablecer contrasena",
+  body,
 }: PasswordResetTemplateProps) {
   return (
     <AuthEmailLayout
       previewText={previewText}
-      title="Restablece tu contrasena"
+      title={title}
       intro={
-        name
+        intro ??
+        (name
           ? `Hola ${name}, recibimos una solicitud para cambiar la contrasena de tu cuenta.`
-          : "Recibimos una solicitud para cambiar la contrasena de tu cuenta."
+          : "Recibimos una solicitud para cambiar la contrasena de tu cuenta.")
       }
-      ctaLabel="Restablecer contrasena"
+      ctaLabel={ctaLabel}
       ctaUrl={resetUrl}
     >
       <Text style={paragraph}>
-        Usa este enlace para definir una nueva contrasena. Por seguridad, estara
-        disponible durante {expiresInText}. Si no solicitaste este cambio, puedes ignorar
-        este mensaje.
+        {body ??
+          `Usa este enlace para definir una nueva contrasena. Por seguridad, estara disponible durante ${expiresInText}. Si no solicitaste este cambio, puedes ignorar este mensaje.`}
       </Text>
     </AuthEmailLayout>
   );

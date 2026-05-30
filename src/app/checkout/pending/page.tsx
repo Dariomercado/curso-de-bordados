@@ -10,11 +10,11 @@ export default function CheckoutPendingPage() {
   return (
     <CheckoutReturnPage
       eyebrow="Checkout"
-      title="Tu pago esta pendiente."
-      description="Algunos medios de pago pueden demorar unos minutos en acreditarse. Cuando la confirmacion llegue, el acceso se actualizara automaticamente."
-      note="No necesitas reenviar nada desde esta pantalla. Puedes revisar tu cuenta o volver al catalogo mientras esperamos la confirmacion del pago."
-      primaryLink={{ href: "/mi-cuenta", label: "Ir a mi cuenta" }}
-      secondaryLink={{ href: "/cursos", label: "Ver cursos" }}
+      title="Tu pago esta pendiente de confirmacion."
+      description="Algunos medios de pago pueden demorar unos minutos. No hace falta volver a comprar: cuando Mercado Pago confirme el pago, habilitaremos el curso en el email usado durante la compra."
+      note="Si es tu primera compra, podes activar tu acceso creando una contrasena. Si el curso todavia no aparece, espera unos minutos y vuelve a revisar."
+      primaryLink={{ href: "/recuperar-contrasena", label: "Activar acceso" }}
+      secondaryLink={{ href: "/mis-cursos", label: "Ver mis cursos" }}
     />
   );
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkRateLimit, getRateLimitHeaders } from "@/lib/http/rate-limit";
 import { getRequestOrigin } from "@/lib/http/request-origin";
 import { isDevConsolePreviewEnabled } from "@/server/email/is-dev-console-preview-enabled";
 import { registerStudent } from "@/server/use-cases/auth/register-student";
@@ -6,6 +7,29 @@ import { registerStudent } from "@/server/use-cases/auth/register-student";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const email =
+      typeof body === "object" &&
+      body !== null &&
+      "email" in body &&
+      typeof body.email === "string"
+        ? body.email
+        : null;
+    const rateLimit = checkRateLimit(request, {
+      keyPrefix: "auth:register",
+      limit: 5,
+      windowMs: 15 * 60 * 1000,
+      identifiers: [email],
+    });
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        {
+          message: "Demasiados intentos. Intenta nuevamente en unos minutos.",
+        },
+        { status: 429, headers: getRateLimitHeaders(rateLimit) },
+      );
+    }
+
     const result = await registerStudent({
       ...body,
       origin: getRequestOrigin(request),
