@@ -13,17 +13,21 @@ Repositorio: https://github.com/Dariomercado/curso-de-bordados (público) · Ram
 
 ## Tasks
 
-- **T1** (S1) — Escaneo de secretos en árbol e historial completo — `done` — commit `docs: add repository audit report`
-- **T2** (S2) — Toolchain, dependencias, build y puesta en marcha con la base provista — `done` — commit `docs: add repository audit report`
-- **T3** (S3) — Pruebas E2E de los flujos principales — `done` — commit `docs: add repository audit report`
-- **T4** (S5) — Documento de auditoría — `done` — commit `docs: add repository audit report`
-- **T5** (S4) — Higiene de repositorio: `.gitignore` + `.gitattributes` — `done` — commit `chore: tighten gitignore and enforce LF endings`
-- **T6** (S4) — README en inglés + capturas reales — `done` — commit `docs: rewrite README in English with screenshots`
-- **T7** (S4) — Licencia MIT — `done` — commit `chore: add MIT license`
-- **T8** (S2) — `prisma generate` en instalación (sin él, un clon limpio no corre la suite) — `done` — commit `build: generate prisma client on install`
-- **T9** (S4) — Eliminar restos de Create Next App — `done` — commit `chore: remove unused create-next-app assets`
+- **T1** (S1) — Escaneo de secretos en árbol e historial completo — `done` — `7a3a0f8`
+- **T2** (S2) — Toolchain, dependencias, build y puesta en marcha con la base provista — `done` — `7a3a0f8`
+- **T3** (S3) — Pruebas E2E de los flujos principales — `done` — `7a3a0f8`
+- **T4** (S5) — Documento de auditoría — `done` — `7a3a0f8`
+- **T5** (S4) — Higiene de repositorio: `.gitignore` + `.gitattributes` — `done` — `6b75682`
+- **T6** (S4) — Licencia MIT — `done` — `458b96f`
+- **T7** (S2) — `prisma generate` en instalación (sin él, un clon limpio no corre la suite) — `done` — `443759d`
+- **T8** (S4) — README en inglés + capturas reales — `done` — `5596a06`
+- **T9** (S4) — Eliminar restos de Create Next App — `done` — `505765b`
 - **T10** (S4) — Descripción y topics del repositorio en GitHub — `done` (metadatos, sin commits)
 - **T11** (S5) — Reporte final al humano — `done`
+
+### Slice de entrega
+
+La rama `chore/audit-hardening` acumula **6 commits y ~500 líneas autoradas** (sin lockfiles) sobre `origin/main`. Supera el slice de ~400 líneas, así que el límite de revisión queda registrado acá: si esto se publica, conviene partirlo en dos PR encadenados — (1) auditoría e higiene (`7a3a0f8`, `6b75682`, `458b96f`, `443759d`) y (2) presentación (`5596a06`, `505765b`). Sin push, por pedido explícito.
 
 ## Hallazgos
 
