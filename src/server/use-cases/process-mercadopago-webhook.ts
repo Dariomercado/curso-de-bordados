@@ -56,7 +56,7 @@ function isUnsignedMerchantOrderBypassEnabled(topic: string | null) {
   );
 }
 
-function buildFinalizeInputFromMerchantOrder(input: {
+function buildFinalizeInputFromPayment(input: {
   payment: MercadoPagoPayment;
   externalReference: string;
   paidAmount: number;
@@ -90,6 +90,61 @@ function getApprovedTotal(payments: MercadoPagoMerchantOrderPayment[]) {
   return payments.reduce((total, payment) => total + (payment.transactionAmount ?? 0), 0);
 }
 
+async function handleApprovedPaymentNotification(
+  paymentId: string,
+): Promise<UseCaseResult<null>> {
+  const payment = await getPaymentById(paymentId);
+
+  if (payment.status !== "approved") {
+    console.info("[mercadopago] Payment notification ignored without an approved status", {
+      paymentId: payment.id,
+      paymentStatus: payment.status,
+    });
+
+    return {
+      success: true,
+      status: 202,
+      message: "El pago todavia no esta aprobado.",
+      data: null,
+    };
+  }
+
+  if (!payment.externalReference) {
+    return {
+      success: false,
+      status: 400,
+      message: "El pago de Mercado Pago no incluye external_reference.",
+    };
+  }
+
+  if (payment.transactionAmount === null) {
+    return {
+      success: false,
+      status: 400,
+      message: "El pago de Mercado Pago no devolvio transaction_amount.",
+    };
+  }
+
+  const finalizeResult = await finalizePaidOrder(
+    buildFinalizeInputFromPayment({
+      payment,
+      externalReference: payment.externalReference,
+      paidAmount: payment.transactionAmount,
+    }),
+  );
+
+  if (!finalizeResult.success) {
+    return finalizeResult;
+  }
+
+  return {
+    success: true,
+    status: 200,
+    message: "Webhook procesado correctamente.",
+    data: null,
+  };
+}
+
 export async function processMercadoPagoWebhook(
   input: ProcessMercadoPagoWebhookInput,
 ): Promise<UseCaseResult<null>> {
@@ -108,24 +163,7 @@ export async function processMercadoPagoWebhook(
     });
   }
 
-  if (isPaymentTopic(topic)) {
-    console.info("[mercadopago] Payment webhook ignored for fulfillment", {
-      topic,
-      dataIdSource,
-      hasSignature: Boolean(input.xSignature),
-      hasXRequestId: Boolean(input.xRequestId),
-      resourceId,
-    });
-
-    return {
-      success: true,
-      status: 202,
-      message: "Notificacion payment ignorada: merchant_order es la fuente de verdad.",
-      data: null,
-    };
-  }
-
-  if (!isMerchantOrderTopic(topic)) {
+  if (!isPaymentTopic(topic) && !isMerchantOrderTopic(topic)) {
     return {
       success: true,
       status: 202,
@@ -186,9 +224,13 @@ export async function processMercadoPagoWebhook(
       return {
         success: false,
         status: 401,
-        message: "La firma del webhook merchant_order de Mercado Pago no es valida.",
+        message: "La firma del webhook de Mercado Pago no es valida.",
       };
     }
+  }
+
+  if (isPaymentTopic(topic)) {
+    return handleApprovedPaymentNotification(resourceId);
   }
 
   const merchantOrder = await getMerchantOrderById(resourceId);
@@ -276,7 +318,7 @@ export async function processMercadoPagoWebhook(
   }
 
   const finalizeResult = await finalizePaidOrder(
-    buildFinalizeInputFromMerchantOrder({
+    buildFinalizeInputFromPayment({
       payment,
       externalReference: merchantOrder.externalReference,
       paidAmount: approvedTotal,

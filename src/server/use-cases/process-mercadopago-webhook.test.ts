@@ -122,24 +122,99 @@ describe("processMercadoPagoWebhook", () => {
     });
   });
 
-  it("ignores payment notifications as non-business events", async () => {
+  it("finalizes the order for an approved payment notification", async () => {
+    validateMercadoPagoWebhookSignatureMock.mockReturnValue(true);
+    getPaymentByIdMock.mockResolvedValue({
+      id: "191562251316",
+      status: "approved",
+      statusDetail: "accredited",
+      externalReference: "order_1",
+      currencyId: "ARS",
+      transactionAmount: 5200,
+      payerEmail: "comprador.e2e@example.com",
+      dateApproved: "2026-11-25T15:01:00.000Z",
+    });
+    finalizePaidOrderMock.mockResolvedValue({
+      success: true,
+      status: 200,
+      message: "Orden finalizada correctamente.",
+      data: {
+        orderId: "order-db-1",
+        userId: "user-1",
+        mercadoPagoPaymentId: "191562251316",
+      },
+    });
+
     const result = await processMercadoPagoWebhook({
       type: "payment",
-      dataId: "123",
+      dataId: "191562251316",
+      xSignature: "ts=123,v1=abc",
+      xRequestId: "req-1",
+    });
+
+    expect(validateMercadoPagoWebhookSignatureMock).toHaveBeenCalledWith({
+      dataId: "191562251316",
+      xSignature: "ts=123,v1=abc",
+      xRequestId: "req-1",
+    });
+    expect(getPaymentByIdMock).toHaveBeenCalledWith("191562251316");
+    expect(finalizePaidOrderMock).toHaveBeenCalledOnce();
+    expect(finalizePaidOrderMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        externalReference: "order_1",
+        paidAmount: 5200,
+      }),
+    );
+    expect(result).toEqual({
+      success: true,
+      status: 200,
+      message: "Webhook procesado correctamente.",
+      data: null,
+    });
+  });
+
+  it("does not finalize a payment notification that is not approved", async () => {
+    validateMercadoPagoWebhookSignatureMock.mockReturnValue(true);
+    getPaymentByIdMock.mockResolvedValue({
+      id: "191562251316",
+      status: "in_process",
+      statusDetail: "pending_contingency",
+      externalReference: "order_1",
+      currencyId: "ARS",
+      transactionAmount: 5200,
+      payerEmail: "comprador.e2e@example.com",
+      dateApproved: null,
+    });
+
+    const result = await processMercadoPagoWebhook({
+      type: "payment",
+      dataId: "191562251316",
+      xSignature: "ts=123,v1=abc",
+      xRequestId: "req-1",
+    });
+
+    expect(finalizePaidOrderMock).not.toHaveBeenCalled();
+    expect(result.success).toBe(true);
+    expect(result.status).toBe(202);
+  });
+
+  it("rejects a payment notification with an invalid signature without finalizing", async () => {
+    validateMercadoPagoWebhookSignatureMock.mockReturnValue(false);
+
+    const result = await processMercadoPagoWebhook({
+      type: "payment",
+      dataId: "191562251316",
       xSignature: "ts=123,v1=abc",
       xRequestId: "req-1",
     });
 
     expect(result).toEqual({
-      success: true,
-      status: 202,
-      message:
-        "Notificacion payment ignorada: merchant_order es la fuente de verdad.",
-      data: null,
+      success: false,
+      status: 401,
+      message: "La firma del webhook de Mercado Pago no es valida.",
     });
-    expect(validateMercadoPagoWebhookSignatureMock).not.toHaveBeenCalled();
-    expect(getMerchantOrderByIdMock).not.toHaveBeenCalled();
     expect(getPaymentByIdMock).not.toHaveBeenCalled();
+    expect(finalizePaidOrderMock).not.toHaveBeenCalled();
   });
 
   it("returns 401 when the merchant_order webhook signature is invalid", async () => {
@@ -155,7 +230,7 @@ describe("processMercadoPagoWebhook", () => {
     expect(result).toEqual({
       success: false,
       status: 401,
-      message: "La firma del webhook merchant_order de Mercado Pago no es valida.",
+      message: "La firma del webhook de Mercado Pago no es valida.",
     });
     expect(getMerchantOrderByIdMock).not.toHaveBeenCalled();
     expect(getPaymentByIdMock).not.toHaveBeenCalled();
@@ -232,7 +307,7 @@ describe("processMercadoPagoWebhook", () => {
     expect(result).toEqual({
       success: false,
       status: 401,
-      message: "La firma del webhook merchant_order de Mercado Pago no es valida.",
+      message: "La firma del webhook de Mercado Pago no es valida.",
     });
     expect(getMerchantOrderByIdMock).not.toHaveBeenCalled();
     expect(finalizePaidOrderMock).not.toHaveBeenCalled();
