@@ -62,6 +62,66 @@ describe("processMercadoPagoWebhook", () => {
     });
   });
 
+  it("finalizes the order when the merchant_order id arrives in the legacy query id parameter", async () => {
+    validateMercadoPagoWebhookSignatureMock.mockReturnValue(true);
+    getMerchantOrderByIdMock.mockResolvedValue({
+      id: "191562251316",
+      status: "closed",
+      orderStatus: "paid",
+      externalReference: "order_1",
+      totalAmount: 5200,
+      paidAmount: 5200,
+      payments: [
+        {
+          id: "191562251316",
+          status: "approved",
+          transactionAmount: 5200,
+        },
+      ],
+    });
+    getPaymentByIdMock.mockResolvedValue({
+      id: "191562251316",
+      status: "approved",
+      statusDetail: "accredited",
+      externalReference: "order_1",
+      currencyId: "ARS",
+      transactionAmount: 5200,
+      payerEmail: "comprador.e2e@example.com",
+      dateApproved: "2026-11-25T14:44:28.000Z",
+    });
+    finalizePaidOrderMock.mockResolvedValue({
+      success: true,
+      status: 200,
+      message: "Orden finalizada correctamente.",
+      data: {
+        orderId: "order-db-1",
+        userId: "user-1",
+        mercadoPagoPaymentId: "191562251316",
+      },
+    });
+
+    const result = await processMercadoPagoWebhook({
+      topic: "merchant_order",
+      legacyId: "191562251316",
+      xSignature: "ts=1795617867,v1=abc",
+      xRequestId: "req-1",
+    });
+
+    expect(validateMercadoPagoWebhookSignatureMock).toHaveBeenCalledWith({
+      dataId: "191562251316",
+      xSignature: "ts=1795617867,v1=abc",
+      xRequestId: "req-1",
+    });
+    expect(getMerchantOrderByIdMock).toHaveBeenCalledWith("191562251316");
+    expect(finalizePaidOrderMock).toHaveBeenCalledOnce();
+    expect(result).toEqual({
+      success: true,
+      status: 200,
+      message: "Webhook procesado correctamente.",
+      data: null,
+    });
+  });
+
   it("ignores payment notifications as non-business events", async () => {
     const result = await processMercadoPagoWebhook({
       type: "payment",

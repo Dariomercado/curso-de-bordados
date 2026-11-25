@@ -134,8 +134,8 @@ export async function processMercadoPagoWebhook(
     };
   }
 
-  if (!input.dataId) {
-    console.warn("[mercadopago] Merchant order notification without query data.id", {
+  if (!resourceId) {
+    console.warn("[mercadopago] Merchant order notification without a resource id", {
       topic,
       dataIdSource,
       hasSignature: Boolean(input.xSignature),
@@ -154,7 +154,7 @@ export async function processMercadoPagoWebhook(
 
   try {
     isValidSignature = validateMercadoPagoWebhookSignature({
-      dataId: input.dataId ?? null,
+      dataId: resourceId,
       xSignature: input.xSignature ?? null,
       xRequestId: input.xRequestId ?? null,
     });
@@ -191,7 +191,7 @@ export async function processMercadoPagoWebhook(
     }
   }
 
-  const merchantOrder = await getMerchantOrderById(input.dataId);
+  const merchantOrder = await getMerchantOrderById(resourceId);
 
   if (!merchantOrder.externalReference) {
     return {
