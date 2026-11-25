@@ -1,198 +1,209 @@
-# Susana y los hilos de la memoria
+# Atelier de Bordado — Online Embroidery Courses
 
-Plataforma web fullstack para presentar y vender cursos digitales de bordado. El MVP v1 incluye sitio publico, cursos desde base de datos, autenticacion, aula privada, panel admin operativo, checkout Mercado Pago, fulfillment por webhook, email transaccional y rate limiting minimo.
+Full-stack platform to present and sell digital embroidery courses. The v1 MVP includes a public marketing site, a database-driven course catalog, authentication, a private classroom, an operational admin panel, Mercado Pago checkout, webhook-driven fulfillment, transactional email and basic rate limiting.
 
-> Estado actual: MVP v1 validado localmente y preparado para subir a GitHub. No esta desplegado todavia.
+> Status: v1 MVP validated locally. **Not deployed yet.** No production environment is configured.
+
+## Screenshots
+
+| Home | Course catalog |
+| --- | --- |
+| ![Home](docs/screenshots/01-home.png) | ![Course catalog](docs/screenshots/02-cursos.png) |
+
+| Course detail | Checkout / login |
+| --- | --- |
+| ![Course detail](docs/screenshots/03-curso-detalle.png) | ![Login](docs/screenshots/05-login.png) |
+
+| My courses | Classroom |
+| --- | --- |
+| ![My courses](docs/screenshots/07-mis-cursos.png) | ![Classroom](docs/screenshots/08-aula.png) |
+
+| Admin panel | Contact |
+| --- | --- |
+| ![Admin](docs/screenshots/09-admin.png) | ![Contact](docs/screenshots/04-contacto.png) |
+
+All screenshots are captured from the running application with seeded data.
 
 ## Stack
 
-- Next.js 16 App Router (`src/app`)
-- React 19
+- Next.js 16 (App Router, `src/app`) + React 19
 - TypeScript
 - Tailwind CSS 4
-- PostgreSQL
-- Prisma 7
-- Auth.js / NextAuth v4
-- Zod
-- bcryptjs
-- React Email + Resend
-- Mercado Pago via HTTP/fetch propio
+- PostgreSQL + Prisma 7
+- Auth.js / NextAuth v4 (credentials, JWT sessions)
+- Zod + bcryptjs
+- React Email + Resend (transactional email, with a console provider for local development)
+- Mercado Pago via a small HTTP client (no SDK)
 - Vitest + Testing Library + jsdom
-- Docker Compose para PostgreSQL local
+- Docker Compose for the local PostgreSQL instance
 
-## Funcionalidad MVP v1
+## What it does
 
-- Home, paginas de cursos, detalle de curso, sobre mi y contacto.
-- Cursos/lecciones desde PostgreSQL via Prisma.
-- Registro, login, verificacion de email, recuperacion/restablecimiento de contrasena.
-- `emailVerifiedAt` no bloquea login/acceso en MVP v1.
-- Area privada: mi cuenta, mis cursos y aula por enrollment.
-- Admin operativo basico: leads, usuarios, cursos y enrollments.
-- Checkout Mercado Pago para cursos.
-- Fulfillment por webhook `merchant_order`, no por redirect.
-- Compra guest permitida.
-- Activacion post-compra guest usando reset password.
-- Email transaccional "Activa tu acceso" cuando una compra queda asociada a un usuario sin `passwordHash`.
-- Rate limiting minimo en endpoints publicos sensibles.
+- Public pages: home, course catalog, course detail, about, contact.
+- Courses and lessons served from PostgreSQL through Prisma.
+- Registration, login, email verification, password recovery and reset.
+- `emailVerifiedAt` exists but does not block login or access in v1.
+- Private area: account page, my courses, and a per-enrollment classroom.
+- Admin panel: contact leads, users, courses and enrollments.
+- Mercado Pago checkout that creates a local `PENDING` order plus a payment preference.
+- Fulfillment driven by the `merchant_order` webhook, not by the browser redirect.
+- Guest checkout allowed; guest buyers get access through the password-reset flow.
+- "Activate your access" transactional email when a purchase maps to a user without a password hash.
+- Minimal rate limiting on sensitive public endpoints.
 
-## Fuera del MVP v1
+Out of scope for v1: CMS, course/content editor, advanced admin, refunds, media pipeline, Server Actions, production deploy.
 
-- CMS.
-- Editor de cursos/contenido.
-- Admin avanzado.
-- Gestion avanzada de ordenes/pagos.
-- Refunds automaticos.
-- Cloudinary/media pipeline.
-- Server Actions.
-- Deploy productivo.
+## Requirements
 
-## Requisitos
+- Node.js 20 or newer (verified on Node 24.21.0, npm 11.19.0)
+- npm
+- Docker (for the local PostgreSQL container) or an existing PostgreSQL instance
 
-- Node.js compatible con Next.js 16.
-- npm.
-- Docker Desktop o una instancia PostgreSQL local/remota.
+## Local setup
 
-## Setup local
-
-1. Instalar dependencias:
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-2. Crear archivo de entorno local:
+> `postinstall` runs `prisma generate`, so the Prisma client is ready after install.
+
+2. Create your local environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-En Windows PowerShell:
+3. Fill `.env` with local values (see [Environment variables](#environment-variables)). Never commit `.env`.
 
-```powershell
-Copy-Item .env.example .env
-```
-
-3. Completar `.env` con valores locales. No commitear `.env`.
-
-4. Levantar PostgreSQL local con Docker:
+4. Start PostgreSQL:
 
 ```bash
 docker compose up -d
 ```
 
-5. Ejecutar migraciones Prisma:
+5. Apply migrations:
 
 ```bash
-npx prisma migrate dev
+npx prisma migrate deploy
 ```
 
-6. Cargar seed si corresponde:
+6. Seed demo data (3 courses, 12 lessons, an admin and a student):
 
 ```bash
 npm run db:seed
 ```
 
-7. Iniciar desarrollo:
+7. Start the dev server:
 
 ```bash
 npm run dev
 ```
 
-La app queda disponible en `http://localhost:3000`.
+The app runs at `http://localhost:3000`.
 
-## Docker / PostgreSQL
+Seeded accounts (override with `SEED_ADMIN_*` / `SEED_STUDENT_*`):
 
-El proyecto incluye `docker-compose.yml` con PostgreSQL 16:
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@atelierbordado.com` | `Admin123!` |
+| Student | `alumna@atelierbordado.com` | `Student123!` |
 
-- host: `localhost`
-- puerto: `5432`
-- database: `susana_hilos_db`
-- user: `postgres`
-- password: `postgres`
+## Environment variables
 
-Ejemplo de `DATABASE_URL` local:
+`.env.example` lists safe placeholders. Required values depend on what you enable.
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | Yes | PostgreSQL connection used by Prisma. Throws if missing. |
+| `AUTH_SECRET` / `NEXTAUTH_SECRET` | Yes in production | Auth.js session encryption. Falls back to a dev-only value outside production and throws in production. |
+| `NEXTAUTH_URL` | Yes for checkout | Public base URL used by Auth.js and Mercado Pago `back_urls`. |
+| `NEXT_PUBLIC_SITE_URL` | No | Public site URL (defaults to `http://localhost:3000`). |
+| `AUTH_EMAIL_PROVIDER` | No | `console` (default) or `resend`. |
+| `AUTH_EMAIL_FROM` | When email is sent | Sender address for transactional email. |
+| `AUTH_EMAIL_REPLY_TO` | No | Reply-to address. |
+| `AUTH_EMAIL_BASE_URL` | No | Base URL for verification/reset links (falls back to the site URL). |
+| `RESEND_API_KEY` | With `resend` | Resend API key. |
+| `MERCADO_PAGO_ACCESS_TOKEN` | Yes for payments | Private Mercado Pago token. Checkout fails without it. |
+| `MERCADO_PAGO_WEBHOOK_SECRET` | Yes for fulfillment | Secret used to validate webhook signatures. |
+| `MERCADO_PAGO_ALLOW_UNSIGNED_WEBHOOK_DEV` | No | Dev-only escape hatch; requires `NODE_ENV !== production`. Never enable in production. |
+| `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` | No | Seed admin credentials. |
+| `SEED_STUDENT_EMAIL` / `SEED_STUDENT_PASSWORD` | No | Seed student credentials. |
+
+Local `DATABASE_URL` example matching `docker-compose.yml`:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/susana_hilos_db"
 ```
 
-Usar este valor solo como referencia local. No subir secretos ni credenciales reales.
-
-## Prisma
-
-Comandos utiles:
-
-```bash
-npx prisma migrate dev
-npx prisma migrate status
-npx prisma studio
-npm run db:seed
-```
-
-`prisma/schema.prisma` es la fuente de verdad del modelo de datos. Las migraciones estan en `prisma/migrations`.
+Use it only as a local reference. Never commit real credentials.
 
 ## Scripts
 
 ```bash
-npm run dev        # servidor local de desarrollo
+npm run dev        # local dev server
+npm run build      # production build
+npm run start      # serve the production build
 npm run lint       # ESLint
-npm run test       # Vitest interactivo
-npm run test:run   # Vitest una sola corrida
-npm run build      # build de produccion
-npm run start      # servir build local
-npm run db:seed    # seed Prisma
+npm run test       # Vitest (watch)
+npm run test:run   # Vitest single run
+npm run db:seed    # seed the database
 ```
 
-## Validacion MVP v1
+Useful Prisma commands:
 
-Ultima validacion final registrada:
+```bash
+npx prisma migrate deploy   # apply migrations
+npx prisma migrate status   # check migration state
+npx prisma studio           # database browser
+```
 
-- `npm run lint` pasa con 1 warning no bloqueante.
-- `npm run test:run` pasa: 16 files, 53 tests.
-- `npm run build` pasa y genera 35 paginas.
+`prisma/schema.prisma` is the source of truth for the data model; migrations live in `prisma/migrations`.
 
-## Variables de entorno
+## Testing
 
-`.env.example` contiene placeholders seguros para GitHub/futuro deploy. La `.env` real no debe versionarse.
+```bash
+npm run test:run
+```
 
-Variables principales:
+The suite runs 16 files / 53 tests and needs no database: Prisma and repositories are mocked. Coverage includes course view models and repositories, contact leads, paid-order finalization, Mercado Pago webhook signing, the checkout UI, auth/password copy pages, rate limiting and a smoke test.
 
-| Variable | Uso |
-| --- | --- |
-| `DATABASE_URL` | Conexion PostgreSQL usada por Prisma. |
-| `NEXTAUTH_SECRET` | Secreto de Auth.js/NextAuth. |
-| `NEXTAUTH_URL` | URL base publica para Auth.js. |
-| `NEXT_PUBLIC_SITE_URL` | URL publica del sitio. |
-| `AUTH_EMAIL_PROVIDER` | `console` en local/dev o `resend` para email real. |
-| `RESEND_API_KEY` | API key de Resend. |
-| `AUTH_EMAIL_FROM` | Remitente de emails transaccionales. |
-| `AUTH_EMAIL_REPLY_TO` | Reply-to de emails transaccionales. |
-| `AUTH_EMAIL_BASE_URL` | URL base para links de verificacion/reset/activacion. |
-| `MERCADO_PAGO_ACCESS_TOKEN` | Token privado de Mercado Pago. |
-| `NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY` | Public key de Mercado Pago. |
-| `MERCADO_PAGO_WEBHOOK_SECRET` | Secreto para validar webhooks. |
-| `MERCADO_PAGO_ALLOW_UNSIGNED_WEBHOOK_DEV` | Solo local/dev; no habilitar en produccion. |
+Not covered yet: register/verify/reset route handlers, admin enrollment routes, and end-to-end tests.
 
-## Mercado Pago
+## How payments work
 
-- El checkout crea una orden local `PENDING` y una preferencia en Mercado Pago.
-- El fulfillment real depende del webhook `merchant_order`.
-- El redirect a `/checkout/success`, `/checkout/pending` o `/checkout/failure` es solo experiencia de usuario.
-- Las notificaciones `payment` no otorgan acceso por si solas.
+1. Checkout creates a local `PENDING` order and a Mercado Pago preference.
+2. Access is granted by the `merchant_order` webhook, never by the redirect.
+3. `/checkout/success`, `/checkout/pending` and `/checkout/failure` are UX only.
+4. `payment` notifications alone never grant access.
 
-## Documentacion del proyecto
+## Project structure
 
-- `PROJECT_STATE.md`: fuente de verdad actual del MVP v1.
-- `ARCHITECTURE_DECISIONS.md`: historico de arquitectura inicial; puede contener partes desactualizadas.
-- `AUTH_MVP_PLAN.md`: historico del plan inicial de auth; desactualizado frente al MVP v1.
+```
+src/app            routes (marketing route group, admin, api handlers)
+src/features       feature components and view models
+src/server         use cases, repositories, email, payments
+src/lib            auth, db client, validations, http helpers
+prisma             schema, migrations, seed
+docs/screenshots   real application screenshots
+odd/tasks          engineering task and audit documents
+```
 
-## Seguridad
+## Security notes
 
-- No subir `.env` ni secretos.
-- Mantener `.env.example` con placeholders.
-- No habilitar `MERCADO_PAGO_ALLOW_UNSIGNED_WEBHOOK_DEV` en produccion.
-- Rotar secretos si alguna vez fueron expuestos fuera del entorno local.
+- Never commit `.env`; keep `.env.example` with placeholders only.
+- `AUTH_SECRET` is required in production — the app refuses to start without it.
+- Never enable `MERCADO_PAGO_ALLOW_UNSIGNED_WEBHOOK_DEV` in production.
+- Rate limiting is in-memory and per process; revisit before scaling horizontally.
 
-## Estado de deploy
+## Project documentation
 
-No hay deploy productivo todavia. El proyecto esta preparado para subir a GitHub; el deploy futuro requiere configurar base PostgreSQL productiva, variables reales, dominio publico, Mercado Pago y webhook publico.
+- `odd/tasks/auditoria.md` — repository audit: findings, decisions, pending work (Spanish).
+- `PROJECT_STATE.md` — v1 MVP status (Spanish).
+- `ARCHITECTURE_DECISIONS.md` — early architecture notes, partly outdated (Spanish).
+- `AUTH_MVP_PLAN.md` — early auth plan, outdated against v1 (Spanish).
+
+## License
+
+[MIT](LICENSE) © 2026 Dario Mercado
