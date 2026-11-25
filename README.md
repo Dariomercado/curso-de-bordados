@@ -103,12 +103,14 @@ npm run dev
 
 The app runs at `http://localhost:3000`.
 
-Seeded accounts (override with `SEED_ADMIN_*` / `SEED_STUDENT_*`):
+The seed creates three courses, twelve lessons, an admin account and a student
+account. Define `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`, `SEED_STUDENT_EMAIL`
+and `SEED_STUDENT_PASSWORD` before running `npm run db:seed`.
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | `admin@atelierbordado.com` | `Admin123!` |
-| Student | `alumna@atelierbordado.com` | `Student123!` |
+When those variables are unset the seed falls back to demo credentials. **Those
+fallbacks are for local development only.** They are part of this public
+repository, so any deployed instance must define its own: never run a public
+deployment with the fallback passwords.
 
 ## Environment variables
 

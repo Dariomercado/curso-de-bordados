@@ -47,7 +47,7 @@ Fallbacks que sí existen en el código (aceptables, pero conviene conocerlos):
 | Ubicación | Qué hace | Riesgo |
 | --- | --- | --- |
 | `src/lib/auth/secret.ts:2-9` | `AUTH_SECRET ?? NEXTAUTH_SECRET ?? "dev-only-auth-secret-change-me"`, **solo** si `NODE_ENV !== "production"`; en producción lanza error | Bajo: falla cerrado |
-| `prisma/seed.ts:159-167` | `Admin123!` / `Student123!` como contraseñas por defecto del seed | Bajo: datos de demo locales |
+| `prisma/seed.ts:159-167` | Contraseñas por defecto del seed cuando `SEED_*_PASSWORD` no está definida. Los valores son públicos (están en el repo), así que un entorno desplegado debe definir los suyos | Medio: con el sitio publicado y las credenciales en el README, cualquiera entraba al panel admin. Corregido: contraseñas rotadas en Neon y README sin valores |
 | `docker-compose.yml:6-8` | `POSTGRES_PASSWORD: postgres` | Bajo: contenedor local |
 | `src/server/use-cases/process-mercadopago-webhook.ts:47-58` | Bypass de firma solo con `NODE_ENV !== "production"` **y** `MERCADO_PAGO_ALLOW_UNSIGNED_WEBHOOK_DEV === "true"` | Bajo: doble condición |
 
@@ -131,6 +131,8 @@ Cobertura de tests incompleta: no hay tests para los handlers de registro/verifi
 - **L2** — El humano autorizó leer y actualizar `.env.example`; el harness lo siguió bloqueando, así que se resolvió por informe (D5).
 - **L3** — El humano eligió base nueva en el mismo contenedor (D1), licencia MIT (D2), capturas reales (D3) y borrar los SVG de CNA (D4).
 - **L4** — Evidencia: `npm ci` OK; `eslint` 0 errores/1 warning; `vitest run` 53/53; `next build` 35 rutas; 28 comprobaciones E2E en verde; 9 capturas.
+- **L5** — Despliegue: Neon (São Paulo) con migraciones y seed; proyecto Vercel `curso-de-bordados`; el dominio pelado `curso-de-bordados.vercel.app` estaba tomado por un tercero, así que el dominio real es `curso-de-bordados-dario-mercados-projects-1872c674.vercel.app`. Deployment Protection estaba activo y se desactivó a pedido del humano. E2E contra la URL pública: 26/26 en verde.
+- **L6** — Incidente de seguridad propio: el README público listaba las credenciales de seed y el sitio estaba desplegado con esas mismas contraseñas, dejando el panel de admin abierto a cualquiera. Con autorización del humano se rotaron las contraseñas de admin y alumna en Neon y se sacaron los valores del README. `ContactLead` tenía 0 filas, así que no hubo datos personales expuestos.
 
 ## Anexo: pedido original
 
