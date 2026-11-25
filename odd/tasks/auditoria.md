@@ -65,7 +65,7 @@ Fallbacks que sí existen en el código (aceptables, pero conviene conocerlos):
 - **Desfase de configuración:** `docker-compose.yml` declara `postgres:16`, usuario `postgres` y base `susana_hilos_db`; el contenedor real corre `postgres:17.6-alpine` con usuario `susana` y base `susana_bordados`. Seguir el README al pie de la letra (`docker compose up -d`) **falla** porque el puerto 5432 ya está tomado por ese contenedor.
 - **`.env.example`:** documentado como bloqueado por la política de seguridad del harness (no se pudo leer ni editar). Ver *Pendientes*.
 - **Variables obligatorias** (derivadas del código, no del archivo): `DATABASE_URL` (obligatoria, `src/lib/db/prisma.ts:8`), `AUTH_SECRET`/`NEXTAUTH_SECRET` (obligatoria en producción), `NEXTAUTH_URL` (obligatoria para checkout), `MERCADO_PAGO_ACCESS_TOKEN` (obligatoria para cobrar), `MERCADO_PAGO_WEBHOOK_SECRET` (obligatoria para validar webhooks), `AUTH_EMAIL_FROM` (obligatoria si se manda email). Opcionales con default: `NEXT_PUBLIC_SITE_URL`, `AUTH_EMAIL_PROVIDER`, `AUTH_EMAIL_REPLY_TO`, `RESEND_API_KEY` (solo con provider `resend`), `SEED_*`.
-- **Variable muerta:** `NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY` figura en `README.md:172` y en `.env.example` pero **el código no la usa en ningún lado**.
+- **Variable muerta, ya removida:** `NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY` no la lee el código (`grep -rn PUBLIC_KEY src/` → 0 resultados). El checkout es server-side (`client.ts:101` crea la preferencia con el access token y `client.ts:163` devuelve `init_point`), así que la public key sólo serviría con Checkout Bricks/JS SDK en el cliente. El humano la eliminó de `.env.example` durante la auditoría; el README reescrito nunca la lista. Nada que rotar: no es una credencial, es una variable sin uso.
 
 ### 3. Funcionalidad (S3)
 
@@ -116,7 +116,7 @@ Cobertura de tests incompleta: no hay tests para los handlers de registro/verifi
 ## Pendientes
 
 1. **`notFound()` con status 200 y 404 por defecto en inglés.** Agregar `not-found.tsx` propio y decidir si se quitan los `loading.tsx` de `cursos/[slug]` y `mis-cursos/[slug]` para recuperar el 404 real. Requiere decisión de UX/SEO.
-2. **`.env.example`:** no se pudo leer ni editar (política de seguridad). Falta alinearlo con el código: agregar `AUTH_SECRET`, `MERCADO_PAGO_WEBHOOK_SECRET` y quitar `NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY`, que no se usa.
+2. **`.env.example`: resuelto en parte.** El humano eliminó `NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY` del archivo. Falta todavía agregar `AUTH_SECRET` y `MERCADO_PAGO_WEBHOOK_SECRET`, que el código exige y la plantilla no listaba. El archivo sigue bloqueado para el agente por la política de seguridad, así que esa edición la hace el humano.
 3. **`docker-compose.yml` desactualizado** respecto del contenedor real (imagen, usuario, base y credenciales). Alinear o documentar el puerto alternativo.
 4. **Versión de Node sin fijar.** Agregar `engines` y, opcionalmente, `.nvmrc`.
 5. **Rate limit en memoria y `x-forwarded-for` sin validar.** Definir almacenamiento compartido y confianza de proxy antes de producción.
