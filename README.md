@@ -32,7 +32,7 @@ All screenshots are captured from the running application with seeded data.
 - PostgreSQL + Prisma 7
 - Auth.js / NextAuth v4 (credentials, JWT sessions)
 - Zod + bcryptjs
-- React Email + Resend (transactional email, with a console provider for local development)
+- React Email with Resend or Brevo (transactional email; console provider is the local default)
 - Mercado Pago via a small HTTP client (no SDK)
 - Vitest + Testing Library + jsdom
 - Docker Compose for the local PostgreSQL instance
@@ -122,11 +122,12 @@ deployment with the fallback passwords.
 | `AUTH_SECRET` / `NEXTAUTH_SECRET` | Yes in production | Auth.js session encryption. Falls back to a dev-only value outside production and throws in production. |
 | `NEXTAUTH_URL` | Yes for checkout | Public base URL used by Auth.js and Mercado Pago `back_urls`. |
 | `NEXT_PUBLIC_SITE_URL` | No | Public site URL (defaults to `http://localhost:3000`). |
-| `AUTH_EMAIL_PROVIDER` | No | `console` (default) or `resend`. |
+| `AUTH_EMAIL_PROVIDER` | No | `console` (default), `resend` or `brevo`. |
 | `AUTH_EMAIL_FROM` | When email is sent | Sender address for transactional email. |
 | `AUTH_EMAIL_REPLY_TO` | No | Reply-to address. |
 | `AUTH_EMAIL_BASE_URL` | No | Base URL for verification/reset links (falls back to the site URL). |
 | `RESEND_API_KEY` | With `resend` | Resend API key. |
+| `BREVO_API_KEY` | With `brevo` | Brevo API key (transactional email). |
 | `MERCADO_PAGO_ACCESS_TOKEN` | Yes for payments | Private Mercado Pago token. Checkout fails without it. |
 | `MERCADO_PAGO_WEBHOOK_SECRET` | Yes for fulfillment | Secret used to validate webhook signatures. |
 | `MERCADO_PAGO_ALLOW_UNSIGNED_WEBHOOK_DEV` | No | Dev-only escape hatch; requires `NODE_ENV !== production`. Never enable in production. |

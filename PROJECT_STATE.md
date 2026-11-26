@@ -17,7 +17,7 @@ No se va a desplegar todavia. El proximo paso operativo es subir el proyecto a G
 Validacion final verde:
 
 - `npm run lint` pasa con 1 warning no bloqueante.
-- `npm run test:run` pasa: 16 files, 53 tests.
+- `npm run test:run` pasa: 18 files, 69 tests.
 - `npm run build` pasa y genera 35 paginas.
 
 Notas:
@@ -28,7 +28,7 @@ Notas:
 ## 3. Decisiones MVP v1 vigentes
 
 - **Compra guest permitida:** el checkout puede iniciarse y completarse sin sesion activa. La orden conserva `buyerEmail` y puede tener `userId` opcional.
-- **Fulfillment por webhook Mercado Pago:** el otorgamiento de acceso no depende del redirect del navegador. La fuente de verdad para fulfillment es el webhook de Mercado Pago con `merchant_order`; las notificaciones `payment` no otorgan acceso por si solas.
+- **Fulfillment por webhook Mercado Pago:** el otorgamiento de acceso no depende del redirect del navegador. El webhook acepta topicos `payment` y `merchant_order`: una notificacion `payment` aprobada otorga acceso directamente consultando el pago, y `merchant_order` sigue soportada como camino alternativo. El redirect del navegador nunca otorga acceso.
 - **Post-compra guest cerrado:** si el email de compra no existe, el fulfillment crea un usuario `STUDENT` sin password usable y asigna el enrollment. Si el email ya existe, asocia compra/enrollment a ese usuario.
 - **Activacion de acceso:** compradores creados sin `passwordHash` activan acceso usando el flujo existente de recuperar/restablecer contrasena.
 - **Email "Activa tu acceso":** backend envia un email de activacion cuando la compra crea o encuentra un usuario sin `passwordHash`.
@@ -63,7 +63,7 @@ Quedan fuera de MVP v1:
 - Auth.js mediante `next-auth` v4 + `@auth/prisma-adapter`.
 - Zod para validacion.
 - `bcryptjs` para password hashing.
-- React Email + Resend para email transaccional.
+- React Email con Resend o Brevo para email transaccional; provider `console` por defecto en desarrollo.
 - Mercado Pago integrado por HTTP/fetch propio, sin SDK directo `mercadopago`.
 - Vitest + Testing Library + jsdom para tests.
 - Docker Compose para PostgreSQL local.
@@ -214,7 +214,7 @@ Grupos de variables:
 - Base de datos: `DATABASE_URL`.
 - Auth.js/NextAuth: `NEXTAUTH_SECRET`.
 - URLs publicas: `NEXTAUTH_URL`, `NEXT_PUBLIC_SITE_URL`, `AUTH_EMAIL_BASE_URL`.
-- Email transaccional: `AUTH_EMAIL_PROVIDER`, `RESEND_API_KEY`, `AUTH_EMAIL_FROM`, `AUTH_EMAIL_REPLY_TO`.
+- Email transaccional: `AUTH_EMAIL_PROVIDER`, `RESEND_API_KEY`, `BREVO_API_KEY`, `AUTH_EMAIL_FROM`, `AUTH_EMAIL_REPLY_TO`.
 - Mercado Pago: `MERCADO_PAGO_ACCESS_TOKEN`, `NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY`, `MERCADO_PAGO_WEBHOOK_SECRET`.
 - Local/dev: `MERCADO_PAGO_ALLOW_UNSIGNED_WEBHOOK_DEV`.
 
@@ -239,5 +239,5 @@ Listo para preparar subida a GitHub con estas condiciones:
 
 1. Revisar `git status` y confirmar archivos a commitear.
 2. Subir a GitHub sin secretos.
-3. En una etapa futura, preparar deploy: dominio, base PostgreSQL productiva, variables reales, Mercado Pago sandbox/produccion, webhook publico y QA post-deploy.
+3. Preparar deploy del portfolio: Vercel, PostgreSQL hosteado, variables reales, Mercado Pago con credenciales **TEST** (sin cobros reales), webhook publico apuntando al dominio de Vercel y email transaccional via Brevo (`AUTH_EMAIL_PROVIDER=brevo` + `BREVO_API_KEY`). El proveedor `console` no entrega emails en produccion: el comprador guest quedaria sin forma de activar su acceso.
 4. Mantener `PROJECT_STATE.md` como fuente de verdad hasta una nueva actualizacion de estado.

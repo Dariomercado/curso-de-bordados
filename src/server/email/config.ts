@@ -22,11 +22,13 @@ function getProvider(value: string | undefined): EmailProvider {
     return "console";
   }
 
-  if (value === "console" || value === "resend") {
+  if (value === "console" || value === "resend" || value === "brevo") {
     return value;
   }
 
-  throw new Error("AUTH_EMAIL_PROVIDER debe ser 'console' o 'resend'.");
+  throw new Error(
+    "AUTH_EMAIL_PROVIDER debe ser 'console', 'resend' o 'brevo'.",
+  );
 }
 
 export function getTransactionalEmailConfig(): TransactionalEmailConfig {
@@ -74,6 +76,22 @@ export function getTransactionalEmailConfig(): TransactionalEmailConfig {
       replyTo,
       baseUrl,
       resendApiKey,
+    };
+  }
+
+  if (provider === "brevo") {
+    const brevoApiKey = normalizeValue(process.env.BREVO_API_KEY);
+
+    if (!brevoApiKey) {
+      throw new Error("Define BREVO_API_KEY para usar AUTH_EMAIL_PROVIDER=brevo.");
+    }
+
+    return {
+      provider,
+      from,
+      replyTo,
+      baseUrl,
+      brevoApiKey,
     };
   }
 

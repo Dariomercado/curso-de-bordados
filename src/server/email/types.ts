@@ -1,4 +1,4 @@
-export type EmailProvider = "console" | "resend";
+export type EmailProvider = "console" | "resend" | "brevo";
 
 export type TransactionalEmailTag = {
   name: string;
@@ -42,4 +42,5 @@ export type TransactionalEmailConfig = {
   replyTo?: string;
   baseUrl: string;
   resendApiKey?: string;
+  brevoApiKey?: string;
 };
